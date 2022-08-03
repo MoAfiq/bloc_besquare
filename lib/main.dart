@@ -6,8 +6,16 @@ void main() {
   runApp(MaterialApp(
     title: 'Flutter Demo',
     theme: ThemeData(
-      primarySwatch: Colors.blue,
-    ),
+        primarySwatch: Colors.blue,
+        snackBarTheme: const SnackBarThemeData(
+          backgroundColor: Colors.blue,
+          actionTextColor: Colors.white,
+          disabledActionTextColor: Colors.grey,
+          contentTextStyle: TextStyle(fontSize: 16),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          behavior: SnackBarBehavior.floating,
+        )),
     home: BlocProvider(
         create: (context) => CounterCubit(), child: const HomePage()),
   ));
@@ -40,16 +48,26 @@ class _HomePageState extends State<HomePage> {
         bloc: cubit,
         listener: (context, state) {
           const snackBar = SnackBar(
-            content: Text('State is reached'),
+            duration: const Duration(seconds: 3),
+            content: Text('You have reached the negative state stage at -10'),
           );
           const snackBar2 = SnackBar(
-            content: Text('State is reached again'),
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            content: Text('This is the reset state value'),
+          );
+          const snackBar3 = SnackBar(
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+            content: Text('You have reached the positive state stage at 10'),
           );
 
-          if (state == 5) {
+          if (state == -10) {
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          } else if (state == 7) {
+          } else if (state == 0) {
             ScaffoldMessenger.of(context).showSnackBar(snackBar2);
+          } else if (state == 10) {
+            ScaffoldMessenger.of(context).showSnackBar(snackBar3);
           }
         },
         builder: (BuildContext context, state) {
@@ -64,16 +82,52 @@ class _HomePageState extends State<HomePage> {
                   '$state',
                   style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold),
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      cubit.increment();
-                    },
-                    child: const Text('+')),
-                ElevatedButton(
-                    onPressed: () {
-                      cubit.decrement();
-                    },
-                    child: const Text('-')),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.red, // background
+                            onPrimary: Colors.white, // foreground
+                          ),
+                          onPressed: () {
+                            cubit.decrement();
+                          },
+                          child: const Icon(Icons.remove)),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.blue, // background
+                            onPrimary: Colors.white, // foreground
+                          ),
+                          onPressed: () {
+                            cubit.resetValue();
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text('You have reset the counter'),
+                                    content: Text('Start the counts again'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, 'Close'),
+                                        child: const Text('Close'),
+                                      )
+                                    ],
+                                  );
+                                });
+                          },
+                          child: const Icon(Icons.refresh)),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green, // background
+                            onPrimary: Colors.white, // foreground
+                          ),
+                          onPressed: () {
+                            cubit.increment();
+                          },
+                          child: const Icon(Icons.add)),
+                    ])
               ],
             ),
           );

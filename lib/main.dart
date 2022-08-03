@@ -1,24 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import './counter_dart.dart';
+import './multiply_and_divide.dart';
 
 void main() {
-  runApp(MaterialApp(
-    title: 'Flutter Demo',
-    theme: ThemeData(
-        primarySwatch: Colors.blue,
-        snackBarTheme: const SnackBarThemeData(
-          backgroundColor: Colors.blue,
-          actionTextColor: Colors.white,
-          disabledActionTextColor: Colors.grey,
-          contentTextStyle: TextStyle(fontSize: 16),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          behavior: SnackBarBehavior.floating,
-        )),
-    home: BlocProvider(
-        create: (context) => CounterCubit(), child: const HomePage()),
-  ));
+  runApp(MyHomePage());
+}
+
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+          primarySwatch: Colors.blue,
+          snackBarTheme: const SnackBarThemeData(
+            backgroundColor: Colors.blue,
+            actionTextColor: Colors.white,
+            disabledActionTextColor: Colors.grey,
+            contentTextStyle: TextStyle(fontSize: 16),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            behavior: SnackBarBehavior.floating,
+          )),
+      home: BlocProvider(
+          create: (context) => CounterCubit(), child: const HomePage()),
+    );
+  }
 }
 
 class HomePage extends StatefulWidget {
@@ -30,6 +41,33 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late CounterCubit cubit;
+
+  //saving integer function
+  TextEditingController integerSavedController = new TextEditingController();
+
+  void routingToMultiply(BuildContext context, int input, int state) {
+    //Routing to pages from multiply_and_divide.dart
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) {
+        return MultiplyFunction(
+          input: input,
+          state: state,
+        );
+      },
+    ));
+  }
+
+  void routingToDivision(BuildContext context, int input, int state) {
+    //Routing to pages from multiply_and_divide.dart
+    Navigator.push(context, MaterialPageRoute(
+      builder: (BuildContext context) {
+        return DivideFunction(
+          input: input,
+          state: state,
+        );
+      },
+    ));
+  }
 
   @override
   void didChangeDependencies() {
@@ -70,12 +108,28 @@ class _HomePageState extends State<HomePage> {
             ScaffoldMessenger.of(context).showSnackBar(snackBar3);
           }
         },
-        builder: (BuildContext context, state) {
+        builder: (context, state) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                //Receiving the integer input from user
+                TextField(
+                  controller: integerSavedController,
+                  decoration:
+                      new InputDecoration(labelText: 'Enter your integer'),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    print(integerSavedController.text);
+                  },
+                  child: const Text('Save The Integer'),
+                ),
+                const Text(
                   'Button pushed:',
                 ),
                 Text(
@@ -127,7 +181,32 @@ class _HomePageState extends State<HomePage> {
                             cubit.increment();
                           },
                           child: const Icon(Icons.add)),
-                    ])
+                    ]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.purple, // background
+                          onPrimary: Colors.white, // foreground
+                        ),
+                        onPressed: () {
+                          int input = int.parse(integerSavedController.text);
+                          routingToMultiply(context, input, state);
+                        },
+                        child: const Text('X')),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.purple, // background
+                          onPrimary: Colors.white, // foreground
+                        ),
+                        onPressed: () {
+                          int input = int.parse(integerSavedController.text);
+                          routingToDivision(context, input, state);
+                        },
+                        child: const Text('÷')),
+                  ],
+                )
               ],
             ),
           );

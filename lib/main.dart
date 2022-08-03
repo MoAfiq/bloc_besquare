@@ -5,7 +5,7 @@ import './counter_dart.dart';
 import './multiply_and_divide.dart';
 
 void main() {
-  runApp(MyHomePage());
+  runApp(const MyHomePage());
 }
 
 class MyHomePage extends StatelessWidget {
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   late CounterCubit cubit;
 
   //saving integer function
-  TextEditingController integerSavedController = new TextEditingController();
+  final integerSavedController = TextEditingController();
 
   void routingToMultiply(BuildContext context, int input, int state) {
     //Routing to pages from multiply_and_divide.dart
@@ -79,23 +79,23 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter Demo'),
+        title: const Text('Flutter Demo'),
         centerTitle: true,
       ),
-      body: BlocConsumer(
+      body: BlocConsumer<CounterCubit, int>(
         bloc: cubit,
         listener: (context, state) {
           const snackBar = SnackBar(
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
             content: Text('You have reached the negative state stage at -10'),
           );
           const snackBar2 = SnackBar(
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
             content: Text('This is the reset state value'),
           );
           const snackBar3 = SnackBar(
-            duration: const Duration(seconds: 3),
+            duration: Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
             content: Text('You have reached the positive state stage at 10'),
           );
@@ -117,24 +117,19 @@ class _HomePageState extends State<HomePage> {
                 TextField(
                   controller: integerSavedController,
                   decoration:
-                      new InputDecoration(labelText: 'Enter your integer'),
+                      const InputDecoration(labelText: 'Enter your integer'),
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly
                   ],
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    print(integerSavedController.text);
-                  },
-                  child: const Text('Save The Integer'),
                 ),
                 const Text(
                   'Button pushed:',
                 ),
                 Text(
                   '$state',
-                  style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 100, fontWeight: FontWeight.bold),
                 ),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -159,8 +154,10 @@ class _HomePageState extends State<HomePage> {
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
-                                    title: Text('You have reset the counter'),
-                                    content: Text('Start the counts again'),
+                                    title: const Text(
+                                        'You have reset the counter'),
+                                    content:
+                                        const Text('Start the counts again'),
                                     actions: <Widget>[
                                       TextButton(
                                         onPressed: () =>
@@ -182,31 +179,26 @@ class _HomePageState extends State<HomePage> {
                           },
                           child: const Icon(Icons.add)),
                     ]),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.purple, // background
-                          onPrimary: Colors.white, // foreground
-                        ),
-                        onPressed: () {
-                          int input = int.parse(integerSavedController.text);
-                          routingToMultiply(context, input, state);
-                        },
-                        child: const Text('X')),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.purple, // background
-                          onPrimary: Colors.white, // foreground
-                        ),
-                        onPressed: () {
-                          int input = int.parse(integerSavedController.text);
-                          routingToDivision(context, input, state);
-                        },
-                        child: const Text('÷')),
-                  ],
-                )
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.purple, // background
+                      onPrimary: Colors.white, // foreground
+                    ),
+                    onPressed: () {
+                      int input = int.parse(integerSavedController.text);
+                      routingToMultiply(context, input, state);
+                    },
+                    child: const Text('X')),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.purple, // background
+                      onPrimary: Colors.white, // foreground
+                    ),
+                    onPressed: () {
+                      int input = int.parse(integerSavedController.text);
+                      routingToDivision(context, input, state);
+                    },
+                    child: const Text('÷')),
               ],
             ),
           );

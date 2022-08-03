@@ -36,53 +36,29 @@ class _HomePageState extends State<HomePage> {
         title: Text('Flutter Demo'),
         centerTitle: true,
       ),
-      body: BlocListener<CounterCubit, int>(
+      body: BlocBuilder<CounterCubit, int>(
         bloc: cubit,
-        listener: (context, state) {
-          const snackBar = SnackBar(
-            content: Text('State is reached'),
-          );
-          const snackBar2 = SnackBar(
-            content: Text('State is 7'),
-          );
-
-          if (state == 5) {
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          } else if (state == 7) {
-            ScaffoldMessenger.of(context).showSnackBar(snackBar2);
-          }
-        },
-        child: BlocBuilder<CounterCubit, int>(
-          bloc: cubit,
-          builder: (BuildContext context, state) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '$state',
-                    style: const TextStyle(
-                      fontSize: 100,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  ElevatedButton(
+        builder: (BuildContext context, state) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Button pushed:',
+                ),
+                Text(
+                  '$state',
+                  style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold),
+                ),
+                ElevatedButton(
                     onPressed: () {
                       cubit.increment();
                     },
-                    child: const Text('+'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      cubit.decrement();
-                    },
-                    child: const Text('-'),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
+                    child: const Text('+'))
+              ],
+            ),
+          );
+        },
       ),
     );
   }

@@ -36,29 +36,42 @@ class _HomePageState extends State<HomePage> {
         title: Text('Flutter Demo'),
         centerTitle: true,
       ),
-      body: BlocBuilder<CounterCubit, int>(
+      body: BlocListener<CounterCubit, int>(
         bloc: cubit,
-        builder: (BuildContext context, state) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Button pushed:',
-                ),
-                Text(
-                  '$state',
-                  style: TextStyle(fontSize: 100, fontWeight: FontWeight.bold),
-                ),
-                ElevatedButton(
+        listener: (context, state) {
+          const snackBar = SnackBar(
+            content: Text('State is reached'),
+          );
+
+          if (state == 5) {
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+        },
+        child: BlocBuilder<CounterCubit, int>(
+          bloc: cubit,
+          builder: (BuildContext context, state) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '$state',
+                    style: TextStyle(
+                      fontSize: 100,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  ElevatedButton(
                     onPressed: () {
                       cubit.increment();
                     },
-                    child: const Text('+'))
-              ],
-            ),
-          );
-        },
+                    child: const Text('+'),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
